@@ -41,7 +41,33 @@ const signUp = async (req, res) => {
     }
 };
 
+const login = async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({ username });
+        if (user == null) {
+            return res.status(400).json({ message: 'Cannot find user' });
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: 'Invalid password' });
+        }
+
+        const token = jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET);
+        // add access token to user
+        user.accessTokens.push(token);
+        await user.save();
+
+        return res.status(200).json({ user, token });
+    } catch (error) {
+        console.log('Error occurred while logging in user:', error);
+        res.status(500).json({ error });
+    }
+};
+
 module.exports = {
     getAllUsers,
-    signUp
+    signUp,
+    login
 };
