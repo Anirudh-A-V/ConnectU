@@ -22,17 +22,13 @@ const signUp = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
         const result = await User.create({ name, username, password: hashedPassword, email, image });
-
 
         const token = jwt.sign({ username: result.username }, process.env.ACCESS_TOKEN_SECRET);
 
         // add access token to user
         result.accessTokens.push(token);
         await result.save();
-
-        console.log(result);
         return res.status(201).json({ result, token });
 
     } catch (error) {
@@ -155,6 +151,32 @@ const acceptFriendRequest = async (req, res) => {
     }
 };
 
+const unFriend = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const { user } = req.body;
+
+        const [currentUser, friendUser] = await Promise.all([
+            User.findOne({ username: user.username }),
+            User.findOne({ username: username })
+        ]);
+
+        if (!currentUser.Friends.includes(friendUser._id)) {
+            return res.status(409).json({ message: 'User not added' });
+        }
+
+        await Promise.all([
+            currentUser.updateOne({ $pull: { Friends: friendUser._id } }),
+            friendUser.updateOne({ $pull: { Friends: currentUser._id } })
+        ]);
+
+        res.status(200).json({ message: 'User unfriended' });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+};
+
+
 
 module.exports = {
     getAllUsers,
@@ -163,5 +185,6 @@ module.exports = {
     logout,
     getUser,
     sendFriendRequest,
-    acceptFriendRequest
+    acceptFriendRequest,
+    unFriend
 };

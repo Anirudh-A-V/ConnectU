@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllUsers, signUp, login, logout, getUser, sendFriendRequest, acceptFriendRequest } = require('../handlers/userHandlers');
+const { getAllUsers, signUp, login, logout, getUser, sendFriendRequest, acceptFriendRequest, unFriend } = require('../handlers/userHandlers');
 
 const router = express.Router();
 
@@ -14,5 +14,6 @@ router.post('/logout', logout);
 router.get('/getUser/:username', getUser);
 router.post('/send/:username', sendFriendRequest);
 router.post('/accept', acceptFriendRequest);
+router.post('/unfriend/:username', unFriend);
 
 module.exports = router;
