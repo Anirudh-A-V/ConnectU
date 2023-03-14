@@ -122,23 +122,22 @@ const acceptFriendRequest = async (req, res) => {
     try {
         const { user, friend } = req.body;
 
-        const currentUser = await User.findOne({ username: user.username });
-        const friendUser = await User.findOne({ username: friend.username });
-
-        currentUser.Friends.push(friendUser._id);
-        friendUser.Friends.push(currentUser._id);
+        const [currentUser, friendUser] = await Promise.all([
+            User.findOne({ username: user.username }),
+            User.findOne({ username: friend.username })
+        ]);
 
         currentUser.request.to = currentUser.request.to.filter(id => id != friendUser._id);
         friendUser.request.from = friendUser.request.from.filter(id => id != currentUser._id);
 
-        await currentUser.save();
-        await friendUser.save();
+        await Promise.all([currentUser.save(), friendUser.save()]);
 
         res.status(200).json({ message: 'Friend request accepted' });
     } catch (error) {
         res.status(500).json({ error });
     }
 };
+
 
 module.exports = {
     getAllUsers,
