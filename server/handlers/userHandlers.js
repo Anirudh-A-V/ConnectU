@@ -3,6 +3,15 @@ const bcrypt = require('bcrypt');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find({}).select('-password');
+        return res.status(200).json({ users});
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+};
+
 const signUp = async (req, res) => {
     try {
         const {name, username, password, email, image } = req.body;
@@ -33,5 +42,6 @@ const signUp = async (req, res) => {
 };
 
 module.exports = {
+    getAllUsers,
     signUp
 };
