@@ -101,7 +101,11 @@ const sendFriendRequest = async (req, res) => {
         const friend = await User.findOne({ username });
         const currentUser = await User.findOne({ username: user.username });
 
-        if (currentUser.Friends.includes(friend._id)) {
+        if (currentUser.request.to.includes(friendUser._id)) {
+            return res.status(409).json({ message: 'Request already sent' });
+        } else if (currentUser.request.from.includes(friendUser._id)) {
+            return res.status(409).json({ message: 'Request already received' });
+        } else if (currentUser.Friends.includes(friendUser._id)) {
             return res.status(409).json({ message: 'User already added' });
         }
 
