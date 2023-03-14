@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find({}).select('-password');
-        return res.status(200).json({ users});
+        return res.status(200).json({ users });
     } catch (error) {
         res.status(500).json({ error });
     }
@@ -14,7 +14,7 @@ const getAllUsers = async (req, res) => {
 
 const signUp = async (req, res) => {
     try {
-        const {name, username, password, email, image } = req.body;
+        const { name, username, password, email, image } = req.body;
         const existingUser = await User.findOne({ username });
 
         if (existingUser) {
@@ -25,13 +25,13 @@ const signUp = async (req, res) => {
 
         const result = await User.create({ name, username, password: hashedPassword, email, image });
 
-        
+
         const token = jwt.sign({ username: result.username }, process.env.ACCESS_TOKEN_SECRET);
-        
+
         // add access token to user
         result.accessTokens.push(token);
         await result.save();
-        
+
         console.log(result);
         return res.status(201).json({ result, token });
 
@@ -95,32 +95,32 @@ const getUser = async (req, res) => {
 
 const sendFriendRequest = async (req, res) => {
     try {
-        const { username } = req.params;
-        const { user } = req.body;
-
-        const friend = await User.findOne({ username });
-        const currentUser = await User.findOne({ username: user.username });
-
-        if (currentUser.request.to.includes(friendUser._id)) {
-            return res.status(409).json({ message: 'Request already sent' });
-        } else if (currentUser.request.from.includes(friendUser._id)) {
-            return res.status(409).json({ message: 'Request already received' });
-        } else if (currentUser.Friends.includes(friendUser._id)) {
-            return res.status(409).json({ message: 'User already added' });
-        }
-
-        currentUser.request.to.addToSet(friend._id);
-        friend.request.from.addToSet(currentUser._id);
-
-        await currentUser.save();
-        await friend.save();
-
-        res.status(200).json({ message: 'Friend request sent' });
+      const { username } = req.params;
+      const { user } = req.body;
+  
+      const friend = await User.findOne({ username });
+      const currentUser = await User.findOneAndUpdate(
+        { username: user.username },
+        { $addToSet: { 'request.to': friend._id } },
+        { new: true }
+      );
+      const isRequestReceived = friend.request.from.includes(currentUser._id);
+  
+      if (isRequestReceived) {
+        return res.status(409).json({ message: 'Request already received' });
+      } else if (currentUser.Friends.includes(friend._id) || friend.Friends.includes(currentUser._id)) {
+        return res.status(409).json({ message: 'User already added' });
+      }
+  
+      await friend.updateOne({ $addToSet: { 'request.from': currentUser._id } });
+  
+      res.status(200).json({ message: 'Friend request sent' });
     } catch (error) {
-        console.log('Error occurred while sending friend request:', error);
-        res.status(500).json({ error });
+      console.log('Error occurred while sending friend request:', error);
+      res.status(500).json({ error });
     }
-};
+  };
+  
 
 const acceptFriendRequest = async (req, res) => {
     try {
