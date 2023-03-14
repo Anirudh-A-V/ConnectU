@@ -105,8 +105,8 @@ const sendFriendRequest = async (req, res) => {
             return res.status(409).json({ message: 'User already added' });
         }
 
-        currentUser.request.to.push(friend._id);
-        friend.request.from.push(currentUser._id);
+        currentUser.request.to.addToSet(friend._id);
+        friend.request.from.addToSet(currentUser._id);
 
         await currentUser.save();
         await friend.save();
