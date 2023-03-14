@@ -69,19 +69,17 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
     try {
         const { username } = req.body;
-        const authHeader = req.headers['authorization']
-        const Token = authHeader && authHeader.split(' ')[1]
+        const authHeader = req.headers['authorization'];
+        const Token = authHeader && authHeader.split(' ')[1];
 
-        // remove access token from user
-        const user = await User.findOne({ username });
-        user.accessTokens = user.accessTokens.filter(token => token != Token)
-        await user.save();
+        await User.updateOne({ username }, { $pull: { accessTokens: Token } });
 
         res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
         res.status(500).json({ error });
     }
 };
+
 
 const getUser = async (req, res) => {
     try {
