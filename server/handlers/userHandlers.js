@@ -83,9 +83,20 @@ const logout = async (req, res) => {
     }
 };
 
+const getUser = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const user = await User.findOne({ username }).select('-password');
+        res.status(200).json({ user });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+};
+
 module.exports = {
     getAllUsers,
     signUp,
     login,
-    logout
+    logout,
+    getUser
 };
