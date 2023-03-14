@@ -9,8 +9,8 @@ router.get('/', (req, res) => {
 
 router.get('/users', getAllUsers);
 router.post('/signup', signUp);
-router.get('/login', login);
-router.get('/logout', logout);
+router.post('/login', login);
+router.post('/logout', logout);
 router.get('/getUser/:username', getUser);
 router.post('/send/:username', sendFriendRequest);
 router.post('/accept', acceptFriendRequest);
