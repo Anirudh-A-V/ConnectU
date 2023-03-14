@@ -118,11 +118,34 @@ const sendFriendRequest = async (req, res) => {
     }
 };
 
+const acceptFriendRequest = async (req, res) => {
+    try {
+        const { user, friend } = req.body;
+
+        const currentUser = await User.findOne({ username: user.username });
+        const friendUser = await User.findOne({ username: friend.username });
+
+        currentUser.Friends.push(friendUser._id);
+        friendUser.Friends.push(currentUser._id);
+
+        currentUser.request.to = currentUser.request.to.filter(id => id != friendUser._id);
+        friendUser.request.from = friendUser.request.from.filter(id => id != currentUser._id);
+
+        await currentUser.save();
+        await friendUser.save();
+
+        res.status(200).json({ message: 'Friend request accepted' });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+};
+
 module.exports = {
     getAllUsers,
     signUp,
     login,
     logout,
     getUser,
-    sendFriendRequest
+    sendFriendRequest,
+    acceptFriendRequest
 };
