@@ -131,8 +131,23 @@ const acceptFriendRequest = async (req, res) => {
             User.findOne({ username: friend.username })
         ]);
 
-        currentUser.request.to = currentUser.request.to.filter(id => id != friendUser._id);
-        friendUser.request.from = friendUser.request.from.filter(id => id != currentUser._id);
+        if (!currentUser.request.from.includes(friendUser._id)) {
+            return res.status(409).json({ message: 'Request not received' });
+        }
+
+        if (currentUser.Friends.includes(friendUser._id) || friendUser.Friends.includes(currentUser._id)) {
+            return res.status(409).json({ message: 'User already added' });
+        }
+
+        await Promise.all([
+            currentUser.updateOne({ $pull: { 'request.from': friendUser._id } }),
+            friendUser.updateOne({ $pull: { 'request.to': currentUser._id } })
+        ]);
+
+        await Promise.all([
+            currentUser.updateOne({ $addToSet: { Friends: friendUser._id } }),
+            friendUser.updateOne({ $addToSet: { Friends: currentUser._id } })
+        ]);
 
         await Promise.all([currentUser.save(), friendUser.save()]);
 
