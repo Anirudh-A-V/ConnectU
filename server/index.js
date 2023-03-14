@@ -15,7 +15,11 @@ app.use(bodyParser.json());
 
 app.use('/', routes);
 
+const uri = process.env.MONGODB_CONNECTION_URL;
 
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('MongoDB Connected...'))
+    .catch(err => console.log(err));
 
 app.listen(port, () => {
     console.log(`API listening on port ${port}!`);
