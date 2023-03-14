@@ -93,10 +93,36 @@ const getUser = async (req, res) => {
     }
 };
 
+const sendFriendRequest = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const { user } = req.body;
+
+        const friend = await User.findOne({ username });
+        const currentUser = await User.findOne({ username: user.username });
+
+        if (currentUser.Friends.includes(friend._id)) {
+            return res.status(409).json({ message: 'User already added' });
+        }
+
+        currentUser.request.to.push(friend._id);
+        friend.request.from.push(currentUser._id);
+
+        await currentUser.save();
+        await friend.save();
+
+        res.status(200).json({ message: 'Friend request sent' });
+    } catch (error) {
+        console.log('Error occurred while sending friend request:', error);
+        res.status(500).json({ error });
+    }
+};
+
 module.exports = {
     getAllUsers,
     signUp,
     login,
     logout,
-    getUser
+    getUser,
+    sendFriendRequest
 };
