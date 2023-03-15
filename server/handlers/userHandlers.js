@@ -8,6 +8,7 @@ const getAllUsers = async (req, res) => {
         const users = await User.find({}).select('-password');
         return res.status(200).json({ users });
     } catch (error) {
+        console.log('Error occurred while fetching users:', error);
         res.status(500).json({ error });
     }
 };
@@ -72,6 +73,7 @@ const logout = async (req, res) => {
 
         res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
+        console.log('Error occurred while logging out user:', error);
         res.status(500).json({ error });
     }
 };
@@ -83,6 +85,7 @@ const getUser = async (req, res) => {
         const user = await User.findOne({ username }).select('-password -accessTokens -request');
         res.status(200).json({ user });
     } catch (error) {
+        console.log('Error occurred while fetching user:', error);
         res.status(500).json({ error });
     }
 };
@@ -154,6 +157,7 @@ const acceptFriendRequest = async (req, res) => {
 
         res.status(200).json({ message: 'Friend request accepted' });
     } catch (error) {
+        console.log('Error occurred while accepting friend request:', error);
         res.status(500).json({ error });
     }
 };
@@ -179,6 +183,7 @@ const unFriend = async (req, res) => {
 
         res.status(200).json({ message: 'User unfriended' });
     } catch (error) {
+        console.log('Error occurred while unfriending user:', error);
         res.status(500).json({ error });
     }
 };
@@ -200,6 +205,7 @@ const mutualFriends = async (req, res) => {
         return res.status(200).json({ mutualFriendsList });
 
     } catch (error) {
+        console.log('Error occurred while fetching mutual friends:', error);
         res.status(500).json({ error });
     }
 };
