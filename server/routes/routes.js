@@ -1,5 +1,6 @@
 const express = require('express');
 const { getAllUsers, signUp, login, logout, getUser, sendFriendRequest, acceptFriendRequest, unFriend, mutualFriends } = require('../handlers/userHandlers');
+const authenticateToken = require('../auth/auth');
 
 const router = express.Router();
 
@@ -7,14 +8,14 @@ router.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-router.get('/users', getAllUsers);
+router.get('/users', authenticateToken, getAllUsers);
 router.post('/signup', signUp);
 router.post('/login', login);
-router.post('/logout', logout);
-router.get('/getUser/:username', getUser);
-router.post('/send/:username', sendFriendRequest);
-router.post('/accept', acceptFriendRequest);
-router.post('/unfriend/:username', unFriend);
-router.post('/mutual/:username', mutualFriends);
+router.post('/logout', authenticateToken, logout);
+router.get('/getUser/:username', authenticateToken, getUser);
+router.post('/send/:username', authenticateToken, sendFriendRequest);
+router.post('/accept', authenticateToken, acceptFriendRequest);
+router.post('/unfriend/:username', authenticateToken, unFriend);
+router.post('/mutual/:username', authenticateToken, mutualFriends);
 
 module.exports = router;
