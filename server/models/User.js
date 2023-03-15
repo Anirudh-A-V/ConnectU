@@ -65,4 +65,9 @@ const userSchema = mongoose.Schema({
     },
 });
 
+userSchema.index({ Friends: 1 });
+userSchema.index({ 'request.to': 1 });
+userSchema.index({ 'request.from': 1 });
+
+
 module.exports = mongoose.model('User', userSchema);
