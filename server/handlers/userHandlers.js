@@ -99,10 +99,17 @@ const sendFriendRequest = async (req, res) => {
         { new: true }
       );
       const isRequestReceived = friend.request.from.includes(currentUser._id);
+
+      if (friend.username === currentUser.username) {
+        currentUser.request.to.pull(friend._id);
+        return res.status(409).json({ message: 'Cannot send friend request to yourself' });
+    }
   
       if (isRequestReceived) {
+        currentUser.request.to.pull(friend._id);
         return res.status(409).json({ message: 'Request already received' });
       } else if (currentUser.Friends.includes(friend._id) || friend.Friends.includes(currentUser._id)) {
+        currentUser.request.to.pull(friend._id);
         return res.status(409).json({ message: 'User already added' });
       }
   
@@ -176,6 +183,26 @@ const unFriend = async (req, res) => {
     }
 };
 
+const mutualFriends = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const { user } = req.body;
+
+        const [currentUser, friendUser] = await Promise.all([
+            User.findOne({ username: user.username }),
+            User.findOne({ username: username })
+        ]);
+
+        const mutualFriends = currentUser.Friends.filter((friend) => friendUser.Friends.includes(friend));
+
+        const mutualFriendsList = await User.find({ _id: { $in: mutualFriends } }).select('-password -accessTokens -request');
+
+        return res.status(200).json({ mutualFriendsList });
+
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+};
 
 
 module.exports = {
@@ -186,5 +213,6 @@ module.exports = {
     getUser,
     sendFriendRequest,
     acceptFriendRequest,
-    unFriend
+    unFriend,
+    mutualFriends
 };
