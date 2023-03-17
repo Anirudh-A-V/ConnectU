@@ -76,6 +76,31 @@ const Register = () => {
     }
 
     const handleLogin = () => {
+        const API = "http://localhost:3000/login"
+
+        const result = fetch(API, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "username": getUserName(),
+                "password": password
+            })
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                setToken(data.token);
+                console.log(token)
+                // navigate("/home");
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+
     }
 
     const handleSignup = () => {
@@ -182,7 +207,9 @@ const Register = () => {
                             Forgot password?
                         </p>
                     </div>
-                    <div className="font-medium text-md p-4 mt-6 w-4/5 h-10 bg-transparent border text-[#222221] hover:bg-[#040404] hover:text-[#f9f9f5] border-black transition duration-150 ease-in-out rounded-md flex justify-center items-center cursor-pointer">
+                    <div className="font-medium text-md p-4 mt-6 w-4/5 h-10 bg-transparent border text-[#222221] hover:bg-[#040404] hover:text-[#f9f9f5] border-black transition duration-150 ease-in-out rounded-md flex justify-center items-center cursor-pointer"
+                        onClick={handleLogin}
+                    >
                         Login
                     </div>
                     <div className="flex mt-4">
