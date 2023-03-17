@@ -3,15 +3,122 @@ import Login from './Login'
 import Signup from './Signup'
 import { useState } from 'react'
 import { useStateContext } from '../Contexts/StateContext'
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
+import { storage } from '../Firebase/config'
 
 const Register = () => {
-    // const { login, selectedFile, setLogin, setSelectedFile } = useStateContext;
     const [login, setLogin] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [url, setUrl] = useState("");
+
+    const { token, setToken, count, setCount } = useStateContext();
+
+    const types = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg'];
+
 
     const handleFileInputChange = (event) => {
-        setSelectedFile(event.target.files[0]);
+        if (event.target.files[0] && types.includes(event.target.files[0].type)) {
+            setSelectedFile(event.target.files[0]);
+        } else {
+            setSelectedFile(null);
+        }
     };
+
+    const handleFirstNameInputChange = (event) => {
+        setFirstName(event.target.value);
+    };
+
+    const handleLastNameInputChange = (event) => {
+        setLastName(event.target.value);
+    };
+
+    const handleEmailInputChange = (event) => {
+        setEmail(event.target.value);
+    };
+
+    const handlePasswordInputChange = (event) => {
+        setPassword(event.target.value);
+    };
+
+    const getUserName = () => {
+        return email.split("@")[0];
+    }
+
+    const handleUpload = () => {
+        if (selectedFile == null) {
+            return;
+        }
+        const storageRef = ref(storage, `images/${selectedFile.name}`);
+
+        const uploadImage = uploadBytesResumable(storageRef, selectedFile);
+
+        uploadImage.on('state_changed', (snap) => {
+            let percentage = (snap.bytesTransferred / snap.totalBytes) * 100;
+            console.log(percentage);
+            // setProgress(percentage);
+
+        }, (err) => {
+            console.log(err);
+        }, async () => {
+            await getDownloadURL(uploadImage.snapshot.ref).then((URL) => {
+                console.log(URL);
+                const data = {
+                    url: URL
+                }
+                setUrl(URL);
+                console.log(data);
+            });
+        })
+    }
+
+    const handleLogin = () => {
+    }
+
+    const handleSignup = () => {
+        const API = "http://localhost:3000/signup"
+
+        handleUpload();
+
+        console.log(url);
+
+        setTimeout(() => {
+            const result = fetch(API, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    "name": {
+                        "first": firstName,
+                        "last": lastName
+                    },
+                    "username": getUserName(),
+                    "password": password,
+                    "email": email,
+                    "image": url
+                })
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    setToken(data.token);
+                    // navigate("/home");
+
+                })
+
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+
+        }, 2000);
+
+
+    };
+
 
     return (
         <div className="App flex">
@@ -38,9 +145,10 @@ const Register = () => {
                                     class="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
                                     id="floatingInput"
                                     placeholder="name@example.com"
+                                    onChange={handleEmailInputChange}
                                 />
                                 <label
-                                    for="floatingInput"
+                                    htmlFor="floatingInput"
                                     class="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
                                 >
                                     Email address
@@ -52,9 +160,10 @@ const Register = () => {
                                     class="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
                                     id="floatingPassword"
                                     placeholder="Password"
+                                    onChange={handlePasswordInputChange}
                                 />
                                 <label
-                                    for="floatingPassword"
+                                    htmlFor="floatingPassword"
                                     class="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
                                 >
                                     Password
@@ -73,7 +182,7 @@ const Register = () => {
                             Forgot password?
                         </p>
                     </div>
-                    <div className="font-medium text-md p-4 mt-6 w-4/5 h-10 bg-transparent border text-[#222221] hover:bg-[#040404] hover:text-[#f9f9f5] border-black transition duration-150 ease-in-out rounded-md flex justify-center items-center">
+                    <div className="font-medium text-md p-4 mt-6 w-4/5 h-10 bg-transparent border text-[#222221] hover:bg-[#040404] hover:text-[#f9f9f5] border-black transition duration-150 ease-in-out rounded-md flex justify-center items-center cursor-pointer">
                         Login
                     </div>
                     <div className="flex mt-4">
@@ -107,9 +216,10 @@ const Register = () => {
                                         class="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
                                         id="floatingInput"
                                         placeholder="name@example.com"
+                                        onChange={handleFirstNameInputChange}
                                     />
                                     <label
-                                        for="floatingInput"
+                                        htmlFor="floatingInput"
                                         class="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
                                     >
                                         First Name
@@ -121,9 +231,10 @@ const Register = () => {
                                         class="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
                                         id="floatingInput"
                                         placeholder="name@example.com"
+                                        onChange={handleLastNameInputChange}
                                     />
                                     <label
-                                        for="floatingInput"
+                                        htmlFor="floatingInput"
                                         class="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
                                     >
                                         Last Name
@@ -136,9 +247,10 @@ const Register = () => {
                                     class="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
                                     id="floatingInput"
                                     placeholder="name@example.com"
+                                    onChange={handleEmailInputChange}
                                 />
                                 <label
-                                    for="floatingInput"
+                                    htmlFor="floatingInput"
                                     class="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
                                 >
                                     Email address
@@ -150,9 +262,10 @@ const Register = () => {
                                     class="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
                                     id="floatingPassword"
                                     placeholder="Password"
+                                    onChange={handlePasswordInputChange}
                                 />
                                 <label
-                                    for="floatingPassword"
+                                    htmlFor="floatingPassword"
                                     class="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
                                 >
                                     Password
@@ -160,7 +273,7 @@ const Register = () => {
                             </div>
                             <div className="relative mb-3 xl:w-96">
                                 <div className="w-full border border-gray-300 rounded-lg flex items-center">
-                                    <label class="flex items-center justify-center text-sm font-medium text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-100 focus:outline-none w-40 h-10" for="file_input">Upload file</label>
+                                    <label class="flex items-center justify-center text-sm font-medium text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-100 focus:outline-none w-40 h-10" htmlFor="file_input">Upload file</label>
                                     <input class=" w-full text-sm hidden text-gray-800 border hover:bg-gray-600 border-gray-300 rounded-lg cursor-pointer bg-gray-500 focus:outline-none" aria-describedby="file_input_help" id="file_input" type="file" onChange={handleFileInputChange} />
                                     <div className="w-full flex items-center justify-center">
                                         {selectedFile && <p className="text-sm text-gray-700">{selectedFile.name}</p>}
@@ -172,7 +285,9 @@ const Register = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="font-medium text-md p-4 mt-6 w-4/5 h-10 bg-transparent border text-[#222221] hover:bg-[#040404] hover:text-[#f9f9f5] border-black transition duration-150 ease-in-out rounded-md flex justify-center items-center">
+                    <div className="font-medium text-md p-4 mt-6 w-4/5 h-10 bg-transparent border text-[#222221] hover:bg-[#040404] hover:text-[#f9f9f5] border-black transition duration-150 ease-in-out rounded-md flex justify-center items-center cursor-pointer"
+                        onClick={handleSignup}
+                    >
                         Sign Up
                     </div>
                     <div className="flex mt-4">
