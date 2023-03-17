@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find({}).select('-password');
+        const users = await User.find({}).select('-password -accessTokens -request');
         return res.status(200).json({ users });
     } catch (error) {
         console.log('Error occurred while fetching users:', error);
@@ -188,6 +188,90 @@ const unFriend = async (req, res) => {
     }
 };
 
+const ignoreFriendRequest = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const { user } = req.body;
+
+        const [currentUser, friendUser] = await Promise.all([
+            User.findOne({ username: user.username }),
+            User.findOne({ username: username })
+        ]);
+
+        if (!friendUser.request.to.includes(currentUser._id)) {
+            return res.status(409).json({ message: 'Request not received' });
+        }
+
+        await Promise.all([
+            currentUser.updateOne({ $pull: { 'request.from': friendUser._id } }),
+            friendUser.updateOne({ $pull: { 'request.to': currentUser._id } })
+        ]);
+
+        res.status(200).json({ message: 'Friend request ignored' });
+    } catch (error) {
+        console.log('Error occurred while ignoring friend request:', error);
+        res.status(500).json({ error });
+    }
+};
+
+const cancelFriendRequest = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const { user } = req.body;
+
+        const [currentUser, friendUser] = await Promise.all([
+            User.findOne({ username: user.username }),
+            User.findOne({ username: username })
+        ]);
+
+        if (!currentUser.request.to.includes(friendUser._id)) {
+            return res.status(409).json({ message: 'Request not sent' });
+        }
+
+        await Promise.all([
+            currentUser.updateOne({ $pull: { 'request.to': friendUser._id } }),
+            friendUser.updateOne({ $pull: { 'request.from': currentUser._id } })
+        ]);
+
+        res.status(200).json({ message: 'Friend request cancelled' });
+    } catch (error) {
+        console.log('Error occurred while cancelling friend request:', error);
+        res.status(500).json({ error });
+    }
+};
+
+const getFriends = async (req, res) => {
+    try {
+        const { user } = req.body;
+
+        const currentUser = User.findOne({ username: user.username });
+
+        const friends = await User.find({ _id: { $in: currentUser.Friends } }).select('-password -accessTokens -request');
+
+        res.status(200).json({ friends });
+
+    } catch (error) {
+        console.log('Error occurred while fetching friends:', error);
+        res.status(500).json({ error });
+    }
+};
+
+const getFriendRequests = async (req, res) => {
+    try {
+        const { user } = req.body;
+
+        const currentUser = User.findOne({ username: user.username });
+
+        const friendRequests = await User.find({ _id: { $in: currentUser.request.from } }).select('-password -accessTokens -request');
+
+        res.status(200).json({ friendRequests });
+
+    } catch (error) {
+        console.log('Error occurred while fetching friend requests:', error);
+        res.status(500).json({ error });
+    }
+};
+
 const mutualFriends = async (req, res) => {
     try {
         const { username } = req.params;
@@ -220,5 +304,9 @@ module.exports = {
     sendFriendRequest,
     acceptFriendRequest,
     unFriend,
-    mutualFriends
+    mutualFriends,
+    ignoreFriendRequest,
+    cancelFriendRequest,
+    getFriends,
+    getFriendRequests
 };
