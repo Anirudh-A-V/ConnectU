@@ -5,9 +5,9 @@ import './index.css'
 import { ContextProvider } from './Contexts/StateContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <ContextProvider>
-    <React.StrictMode>
+  <React.StrictMode>
+    <ContextProvider>
       <App />
-    </React.StrictMode>
-  </ContextProvider>,
+    </ContextProvider>,
+  </React.StrictMode>
 )
