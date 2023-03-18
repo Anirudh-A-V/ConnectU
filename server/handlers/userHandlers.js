@@ -95,12 +95,11 @@ const sendFriendRequest = async (req, res) => {
         const { id } = req.params;
         const { user } = req.body;
 
-        const friend = await User.findOne({ _id: id });
-        const currentUser = await User.findOneAndUpdate(
-            { username: user.username },
-            { $addToSet: { 'request.to': friend._id } },
-            { new: true }
-        );
+        const [currentUser, friend] = await Promise.all([
+            User.findOne({ username: user.username }),
+            User.findOne({ _id: id })
+        ]);
+
         const isRequestReceived = friend.request.from.includes(currentUser._id);
 
         if (friend.username === currentUser.username) {
@@ -244,7 +243,7 @@ const getFriends = async (req, res) => {
     try {
         const { user } = req.body;
 
-        const currentUser = User.findOne({ username: user.username });
+        const currentUser = await User.findOne({ username: user.username });
 
         const friends = await User.find({ _id: { $in: currentUser.Friends } }).select('-password -accessTokens -request');
 
@@ -303,6 +302,38 @@ const mutualFriends = async (req, res) => {
     }
 };
 
+const isFriendOrRequestSent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { user } = req.body;
+
+        const [currentUser, friendUser] = await Promise.all([
+            User.findOne({ username: user.username }),
+            User.findOne({ _id: id })
+        ]);
+
+        if (currentUser.Friends.includes(friendUser._id)) {
+            return res.status(200).json({ isFriend: true });
+        }
+
+        if (currentUser.request.to.includes(friendUser._id)) {
+            return res.status(200).json({ isRequestSent: true });
+        }
+
+        if (friendUser.request.to.includes(currentUser._id)) {
+            return res.status(200).json({ isRequestReceived: true });
+        }
+
+        res.status(200).json({ isFriend: false, isRequestSent: false, isRequestReceived: false });
+
+    } catch (error) {
+        console.log('Error occurred while checking friend status:', error);
+        res.status(500).json({ error });
+    }
+};
+
+
+
 
 module.exports = {
     getAllUsers,
@@ -317,5 +348,6 @@ module.exports = {
     ignoreFriendRequest,
     cancelFriendRequest,
     getFriends,
-    getFriendRequests
+    getFriendRequests,
+    isFriendOrRequestSent
 };
