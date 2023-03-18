@@ -82,7 +82,7 @@ const logout = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = User.findOne({ _id: id }).select('-password -accessTokens -request');
+        const user = await User.findOne({ _id: id }).select('-password -accessTokens -request');
         res.status(200).json({ user });
     } catch (error) {
         console.log('Error occurred while fetching user:', error);
@@ -92,10 +92,10 @@ const getUser = async (req, res) => {
 
 const sendFriendRequest = async (req, res) => {
     try {
-        const { username } = req.params;
+        const { id } = req.params;
         const { user } = req.body;
 
-        const friend = await User.findOne({ username });
+        const friend = await User.findOne({ _id: id });
         const currentUser = await User.findOneAndUpdate(
             { username: user.username },
             { $addToSet: { 'request.to': friend._id } },
@@ -164,12 +164,12 @@ const acceptFriendRequest = async (req, res) => {
 
 const unFriend = async (req, res) => {
     try {
-        const { username } = req.params;
+        const { id } = req.params;
         const { user } = req.body;
 
         const [currentUser, friendUser] = await Promise.all([
             User.findOne({ username: user.username }),
-            User.findOne({ username: username })
+            User.findOne({ _id: id })
         ]);
 
         if (!currentUser.Friends.includes(friendUser._id)) {
@@ -283,12 +283,12 @@ const getFriendRequests = async (req, res) => {
 
 const mutualFriends = async (req, res) => {
     try {
-        const { username } = req.params;
+        const { id } = req.params;
         const { user } = req.body;
 
         const [currentUser, friendUser] = await Promise.all([
             User.findOne({ username: user.username }),
-            User.findOne({ username: username })
+            User.findOne({ _id: id })
         ]);
 
         const mutualFriends = currentUser.Friends.filter((friend) => friendUser.Friends.includes(friend));
