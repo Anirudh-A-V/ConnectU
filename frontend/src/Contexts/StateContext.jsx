@@ -5,6 +5,10 @@ const StateContext = createContext({
     setToken: () => { },
     count: 0,
     setCount: () => { },
+    user: {},
+    setUser: () => { },
+    users: [],
+    setUsers: () => { },
 });
 
 export const ContextProvider = ({ children }) => {
@@ -13,6 +17,8 @@ export const ContextProvider = ({ children }) => {
 
     const [token, setToken] = useState("");
     const [count, setCount] = useState(0);
+    const [user, setUser] = useState({});
+    const [users, setUsers] = useState([]);
 
     return (
         <StateContext.Provider
@@ -21,6 +27,10 @@ export const ContextProvider = ({ children }) => {
                 setToken,
                 count,
                 setCount,
+                user,
+                setUser,
+                users,
+                setUsers,
             }}
         >
             {children}
