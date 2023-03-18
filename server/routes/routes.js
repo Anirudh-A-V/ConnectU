@@ -12,7 +12,7 @@ router.get('/users', authenticateToken, getAllUsers);
 router.post('/signup', signUp);
 router.post('/login', login);
 router.post('/logout', authenticateToken, logout);
-router.get('/getUser/:username', authenticateToken, getUser);
+router.get('/getUser/:id', authenticateToken, getUser);
 router.post('/send/:username', authenticateToken, sendFriendRequest);
 router.post('/accept', authenticateToken, acceptFriendRequest);
 router.post('/unfriend/:username', authenticateToken, unFriend);

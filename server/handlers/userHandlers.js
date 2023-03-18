@@ -81,8 +81,8 @@ const logout = async (req, res) => {
 
 const getUser = async (req, res) => {
     try {
-        const { username } = req.params;
-        const user = await User.findOne({ username }).select('-password -accessTokens -request');
+        const { id } = req.params;
+        const user = User.findOne({ _id: id }).select('-password -accessTokens -request');
         res.status(200).json({ user });
     } catch (error) {
         console.log('Error occurred while fetching user:', error);
@@ -92,39 +92,39 @@ const getUser = async (req, res) => {
 
 const sendFriendRequest = async (req, res) => {
     try {
-      const { username } = req.params;
-      const { user } = req.body;
-  
-      const friend = await User.findOne({ username });
-      const currentUser = await User.findOneAndUpdate(
-        { username: user.username },
-        { $addToSet: { 'request.to': friend._id } },
-        { new: true }
-      );
-      const isRequestReceived = friend.request.from.includes(currentUser._id);
+        const { username } = req.params;
+        const { user } = req.body;
 
-      if (friend.username === currentUser.username) {
-        currentUser.request.to.pull(friend._id);
-        return res.status(409).json({ message: 'Cannot send friend request to yourself' });
-    }
-  
-      if (isRequestReceived) {
-        currentUser.request.to.pull(friend._id);
-        return res.status(409).json({ message: 'Request already received' });
-      } else if (currentUser.Friends.includes(friend._id) || friend.Friends.includes(currentUser._id)) {
-        currentUser.request.to.pull(friend._id);
-        return res.status(409).json({ message: 'User already added' });
-      }
-  
-      await friend.updateOne({ $addToSet: { 'request.from': currentUser._id } });
-  
-      res.status(200).json({ message: 'Friend request sent' });
+        const friend = await User.findOne({ username });
+        const currentUser = await User.findOneAndUpdate(
+            { username: user.username },
+            { $addToSet: { 'request.to': friend._id } },
+            { new: true }
+        );
+        const isRequestReceived = friend.request.from.includes(currentUser._id);
+
+        if (friend.username === currentUser.username) {
+            currentUser.request.to.pull(friend._id);
+            return res.status(409).json({ message: 'Cannot send friend request to yourself' });
+        }
+
+        if (isRequestReceived) {
+            currentUser.request.to.pull(friend._id);
+            return res.status(409).json({ message: 'Request already received' });
+        } else if (currentUser.Friends.includes(friend._id) || friend.Friends.includes(currentUser._id)) {
+            currentUser.request.to.pull(friend._id);
+            return res.status(409).json({ message: 'User already added' });
+        }
+
+        await friend.updateOne({ $addToSet: { 'request.from': currentUser._id } });
+
+        res.status(200).json({ message: 'Friend request sent' });
     } catch (error) {
-      console.log('Error occurred while sending friend request:', error);
-      res.status(500).json({ error });
+        console.log('Error occurred while sending friend request:', error);
+        res.status(500).json({ error });
     }
-  };
-  
+};
+
 
 const acceptFriendRequest = async (req, res) => {
     try {
@@ -260,9 +260,18 @@ const getFriendRequests = async (req, res) => {
     try {
         const { user } = req.body;
 
-        const currentUser = User.findOne({ username: user.username });
+        const currentUser = await User.findOne({ username: user.username });
 
-        const friendRequests = await User.find({ _id: { $in: currentUser.request.from } }).select('-password -accessTokens -request');
+        if (!currentUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+
+        if (!currentUser.request.to.length) {
+            return res.status(200).json({ friendRequests: [] });
+        }
+
+        const friendRequests = await User.find({ _id: { $in: currentUser.request.to } }, { name: 1, username: 1, image: 1 }).select('-password -accessTokens -request');
 
         res.status(200).json({ friendRequests });
 
