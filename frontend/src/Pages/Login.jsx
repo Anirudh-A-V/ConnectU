@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
     const { setLogin } = useStateContext();
 
-    const { setToken, firstName, setFirstName, lastName, setLastName, email, setEmail, password, setPassword } = useStateContext();
+    const { setToken, setUser, email, setEmail, password, setPassword } = useStateContext();
 
     const navigate = useNavigate();
 
@@ -36,7 +36,6 @@ const Login = () => {
             .then((response) => response.json())
             .then((data) => {
                 console.log(data);
-                console.log(token)
                 if (data.token){
                     setToken(data.token);
                     setUser(data.user);
