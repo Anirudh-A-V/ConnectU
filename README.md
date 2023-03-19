@@ -42,7 +42,14 @@ npm run dev
 8. Now goto [http://127.0.0.1:5173/](http://127.0.0.1:5173/) where the app will be initialised
 
 ## API details
+This is the API documentation for the backend server of a simple social media network. This server is built using Node.js and Express, and uses JWT for authentication.
 By default the server will be running in port 3000 which can be changed by simple changing the `PORT` value in the `.env` file.
+
+### Authentication
+All authenticated routes require a valid JWT token to be included in the Authorization header of the request.
+````
+Authorization: Bearer <Token>
+````
 
 ### Routes
 |Route|	HTTP Method|	Description|
