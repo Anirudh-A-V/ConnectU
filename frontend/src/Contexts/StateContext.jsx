@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 
-const StateContext = createContext({
+export const StateContext = createContext({
     token: "",
     setToken: () => { },
     count: 0,
@@ -19,6 +19,10 @@ const StateContext = createContext({
     setEmail: () => { },
     password: "",
     setPassword: () => { },
+    query: "",
+    setQuery: () => { },
+    friends: [],
+    setFriends: () => { },
 });
 
 export const ContextProvider = ({ children }) => {
@@ -27,11 +31,14 @@ export const ContextProvider = ({ children }) => {
     const [token, setToken] = useState("");
     const [user, setUser] = useState({});
     const [users, setUsers] = useState([]);
+    const [friends, setFriends] = useState([]);
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const [query, setQuery] = useState("");
 
     return (
         <StateContext.Provider
@@ -52,7 +59,10 @@ export const ContextProvider = ({ children }) => {
                 setEmail,
                 password,
                 setPassword,
-
+                query,
+                setQuery,
+                friends,
+                setFriends,
             }}
         >
             {children}
