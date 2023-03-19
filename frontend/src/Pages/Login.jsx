@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useStateContext } from "../Contexts/StateContext";
 import { useNavigate } from "react-router-dom";
 
@@ -5,6 +6,7 @@ const Login = () => {
     const { setLogin } = useStateContext();
 
     const { setToken, setUser, email, setEmail, password, setPassword } = useStateContext();
+    const [smallScreen, setSmallScreen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -60,12 +62,20 @@ const Login = () => {
             });
     }
 
+    useEffect(() => {
+        if (window.innerWidth < 768) {
+            setSmallScreen(true);
+        } else {
+            setSmallScreen(false);
+        }
+    }, []);
+
     return (
-        <div className="login-box flex flex-col items-center justify-center w-1/2 min-h-screen border">
+        <div className={`login-box flex flex-col items-center justify-center w-96 ${smallScreen && "bg-white w-[95vw] p-2 rounded-lg min-h-fit"} md:w-1/2 md:min-h-screen border`}>
                     <div className="m-8">
                         <h1 className="font-medium text-4xl text-[#151414]">
                             Hey there{" "}
-                            <span role="img" aria-label="">
+                            <span role="img" aria-label="" className="text-yellow-500">
                                 👋
                             </span>
                         </h1>

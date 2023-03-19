@@ -1,5 +1,5 @@
 import { useStateContext } from "../Contexts/StateContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import { handleEmailInputChange, handlePasswordInputChange, handleFirstNameInputChange, handleLastNameInputChange, getUserName } from "../Utils/FormUtils";
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { storage } from '../Firebase/config'
@@ -9,6 +9,7 @@ const Signup = () => {
     const { setLogin, setToken, firstName, setFirstName, lastName, setLastName, email, setEmail, password, setPassword, user, setUser } = useStateContext();
 
     const [selectedFile, setSelectedFile] = useState(null);
+    const [smallScreen, setSmallScreen] = useState(false);
     const [url, setUrl] = useState("");
 
     const navigate = useNavigate();
@@ -123,8 +124,16 @@ const Signup = () => {
         return email.split("@")[0];
     }
 
+    useEffect(() => {
+        if (window.innerWidth < 768) {
+            setSmallScreen(true);
+        } else {
+            setSmallScreen(false);
+        }
+    }, []);
+
     return (
-        <div className="login-box flex flex-col items-center justify-center w-1/2 min-h-screen border">
+        <div className={`login-box flex flex-col items-center justify-center w-96 ${smallScreen && "bg-white w-[95vw] p-2 rounded-lg min-h-fit"} md:w-1/2 md:min-h-screen border`}>
             <div className="m-8 flex flex-col items-center justify-center">
                 <h1 className="font-medium text-4xl text-[#151414]">
                     Get Started{" "}
