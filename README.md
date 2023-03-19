@@ -79,8 +79,13 @@ Link to the video file -> [Demo Video](https://drive.google.com/file/d/1AIo-E30W
 ## Screenshots
 
 ![Screenshot 2023-03-19 234550](https://user-images.githubusercontent.com/76550448/226198415-9d0cca25-34e4-4ca3-9d32-24ebf3a5e4eb.png)
+<hr></hr>
+
 ![Screenshot 2023-03-19 234633](https://user-images.githubusercontent.com/76550448/226198413-4a528165-8d56-439b-a673-129b963af0b5.png)
-![Screenshot 2023-03-19 234715](https://user-images.githubusercontent.com/76550448/226198411-6e468a16-065b-47ab-a8f6-58c339752435.png)
+<hr></hr>
+
+![Screenshot 2023-03-19 235711](https://user-images.githubusercontent.com/76550448/226198903-96124e1b-fae5-41c7-83de-3c646e2654c7.png)
+
 
 
 
