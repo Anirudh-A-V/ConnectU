@@ -96,26 +96,30 @@ const sendFriendRequest = async (req, res) => {
         const { user } = req.body;
 
         const [currentUser, friend] = await Promise.all([
-            User.findOne({ username: user.username }),
+            User.findOne({ _id: user.id }),
             User.findOne({ _id: id })
         ]);
 
-        const isRequestReceived = friend.request.from.includes(currentUser._id);
-
         if (friend.username === currentUser.username) {
-            currentUser.request.to.pull(friend._id);
             return res.status(409).json({ message: 'Cannot send friend request to yourself' });
         }
 
-        if (isRequestReceived) {
-            currentUser.request.to.pull(friend._id);
+        if (currentUser.request.to.includes(friend._id)) {
+            return res.status(409).json({ message: 'Request already sent' });
+        }
+
+        if (currentUser.request.from.includes(friend._id)) {
             return res.status(409).json({ message: 'Request already received' });
-        } else if (currentUser.Friends.includes(friend._id) || friend.Friends.includes(currentUser._id)) {
-            currentUser.request.to.pull(friend._id);
+        }
+
+        if (currentUser.Friends.includes(friend._id) || friend.Friends.includes(currentUser._id)) {
             return res.status(409).json({ message: 'User already added' });
         }
 
-        await friend.updateOne({ $addToSet: { 'request.from': currentUser._id } });
+        await Promise.all([
+            currentUser.updateOne({ $addToSet: { 'request.to': friend._id } }),
+            friend.updateOne({ $addToSet: { 'request.from': currentUser._id } })
+        ]);
 
         res.status(200).json({ message: 'Friend request sent' });
     } catch (error) {
@@ -152,6 +156,11 @@ const acceptFriendRequest = async (req, res) => {
             friendUser.updateOne({ $addToSet: { Friends: currentUser._id } })
         ]);
 
+        await Promise.all([
+            currentUser.updateOne({ $inc: { noOfFriends: 1 } }),
+            friendUser.updateOne({ $inc: { noOfFriends: 1 } })
+        ]);
+
         await Promise.all([currentUser.save(), friendUser.save()]);
 
         res.status(200).json({ message: 'Friend request accepted' });
@@ -176,9 +185,17 @@ const unFriend = async (req, res) => {
         }
 
         await Promise.all([
-            currentUser.updateOne({ $pull: { Friends: friendUser._id } }),
-            friendUser.updateOne({ $pull: { Friends: currentUser._id } })
+            currentUser.updateOne({
+                $pull: { Friends: friendUser._id },
+                $inc: { noOfFriends: -1 }
+            }),
+            friendUser.updateOne({
+                $pull: { Friends: currentUser._id },
+                $inc: { noOfFriends: -1 }
+            })
         ]);
+
+        await Promise.all([currentUser.save(), friendUser.save()]);
 
         res.status(200).json({ message: 'User unfriended' });
     } catch (error) {
@@ -189,12 +206,12 @@ const unFriend = async (req, res) => {
 
 const ignoreFriendRequest = async (req, res) => {
     try {
-        const { username } = req.params;
+        const { id } = req.params;
         const { user } = req.body;
 
         const [currentUser, friendUser] = await Promise.all([
             User.findOne({ username: user.username }),
-            User.findOne({ username: username })
+            User.findOne({ _id: id })
         ]);
 
         if (!friendUser.request.to.includes(currentUser._id)) {
@@ -215,12 +232,12 @@ const ignoreFriendRequest = async (req, res) => {
 
 const cancelFriendRequest = async (req, res) => {
     try {
-        const { username } = req.params;
+        const { id } = req.params;
         const { user } = req.body;
 
         const [currentUser, friendUser] = await Promise.all([
             User.findOne({ username: user.username }),
-            User.findOne({ username: username })
+            User.findOne({ _id: id })
         ]);
 
         if (!currentUser.request.to.includes(friendUser._id)) {
@@ -265,12 +282,11 @@ const getFriendRequests = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-
-        if (!currentUser.request.to.length) {
+        if (!currentUser.request.from.length) {
             return res.status(200).json({ friendRequests: [] });
         }
 
-        const friendRequests = await User.find({ _id: { $in: currentUser.request.to } }, { name: 1, username: 1, image: 1 }).select('-password -accessTokens -request');
+        const friendRequests = await User.find({ _id: { $in: currentUser.request.from } }, { _id:1, name: 1, username: 1, image: 1 }).select('-password -accessTokens -request');
 
         res.status(200).json({ friendRequests });
 
@@ -313,15 +329,15 @@ const isFriendOrRequestSent = async (req, res) => {
         ]);
 
         if (currentUser.Friends.includes(friendUser._id)) {
-            return res.status(200).json({ isFriend: true });
+            return res.status(200).json({ isFriend: true, isRequestSent: false, isRequestReceived: false });
         }
 
         if (currentUser.request.to.includes(friendUser._id)) {
-            return res.status(200).json({ isRequestSent: true });
+            return res.status(200).json({ isFriend: false, isRequestSent: true, isRequestReceived: false });
         }
 
-        if (friendUser.request.to.includes(currentUser._id)) {
-            return res.status(200).json({ isRequestReceived: true });
+        if (currentUser.request.from.includes(friendUser._id)) {
+            return res.status(200).json({ isFriend: false, isRequestSent: false, isRequestReceived: true });
         }
 
         res.status(200).json({ isFriend: false, isRequestSent: false, isRequestReceived: false });
