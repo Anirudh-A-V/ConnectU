@@ -54,9 +54,10 @@ const Signup = () => {
     const handleSignup = () => {
         const API = `${import.meta.env.VITE_API_URI}/signup`;
 
+        handleUpload();
+        
         setTimeout( async () => {
         try {
-            handleUpload();
             console.log(url);
 
             const response = await fetch(API, {
