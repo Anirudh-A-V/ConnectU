@@ -270,7 +270,7 @@ const User = () => {
                                 No bio provided yet
                             </p>
                         </div>
-                        <Mutuals mutualFriends={mutualFriends} />
+                        <Mutuals mode={'mutual'} mutualFriends={mutualFriends} />
                     </div>
                 </>}
         </>

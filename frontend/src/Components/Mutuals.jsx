@@ -20,7 +20,11 @@ const Mutuals = (props) => {
         <div className="relative mt-4 w-full h-full flex flex-col justify-center">
             <div className="flex flex-col justify-center items-center">
                 <div className="w-[80%] h-[1px] bg-gray-300 "></div>
-                <p className="text-xl font-normal text-gray-800 mt-2 mb-3">Mutuals</p>
+                {props.mode === 'mutual' ?
+                    <p className="text-xl font-normal text-gray-800 mt-2 mb-3">Mutuals</p>
+                    :
+                    <p className="text-xl font-normal text-gray-800 mt-2 mb-3">Friends</p>
+                }
             </div>
             {props.mutualFriends.length > 0 ?
                 <div className=" flex items-center justify-between">
@@ -48,7 +52,11 @@ const Mutuals = (props) => {
                 </div>
                 :
                 <div className="flex flex-col justify-center items-center">
-                    <p className="text-lg font-normal text-gray-600 mb-3">No mutuals</p>
+                    {props.mode === 'mutual' ?
+                        <p className="text-xl font-normal text-gray-800 mt-2 mb-3">No mutuals</p>
+                        :
+                        <p className="text-xl font-normal text-gray-800 mt-2 mb-3">No friends yet</p>
+                    }
                 </div>
             }
         </div>
