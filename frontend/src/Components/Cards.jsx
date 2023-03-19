@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 const Cards = (props) => {
     const navigate = useNavigate();
     return (
-        <div class="w-full bg-white rounded-xl p-12 flex flex-col justify-center items-center border cursor-pointer" onClick={() => {navigate(`${props.slug}`)}}>
+        <div class="w-full bg-white rounded-xl p-12 flex flex-col justify-center items-center border cursor-pointer" onClick={() => {navigate(`/in/${props.slug}`)}}>
             <div class="mb-8">
                 <img class="object-center object-cover rounded-full h-36 w-36" src={`${props.image}`} alt="photo" />
             </div>
