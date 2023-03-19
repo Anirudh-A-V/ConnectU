@@ -19,8 +19,8 @@ router.post('/unfriend/:id', authenticateToken, unFriend);
 router.post('/mutual/:id', authenticateToken, mutualFriends);
 router.post('/friends', authenticateToken, getFriends);
 router.post('/friendrequests', authenticateToken, getFriendRequests);
-router.post('/cancel/:username', authenticateToken, cancelFriendRequest);
-router.post('/ignore/:username', authenticateToken, ignoreFriendRequest);
+router.post('/cancel/:id', authenticateToken, cancelFriendRequest);
+router.post('/ignore/:id', authenticateToken, ignoreFriendRequest);
 router.post('/confirm/:id', authenticateToken, isFriendOrRequestSent);
 
 module.exports = router;
