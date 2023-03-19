@@ -41,3 +41,24 @@ npm run dev
 ````
 8. Now goto [http://127.0.0.1:5173/](http://127.0.0.1:5173/) where the app will be initialised
 
+## API details
+By default the server will be running in port 3000 which can be changed by simple changing the `PORT` value in the `.env` file.
+
+### Routes
+|Route|	HTTP Method|	Description|
+|------|-----------|--------------|
+|/	|GET	|Returns "Hello World!"|
+|/users	|GET	|Returns a list of all users. Requires authentication.|
+|/signup	|POST	|Creates a new user account.|
+|/login	|POST	|Authenticates a user and returns a JWT token.|
+|/logout	|POST	|Logs out the current user. Requires authentication.|
+|/getUser/:id	|GET	|Returns information about the user with the specified ID. Requires authentication.|
+|/send/:id	|POST	|Sends a friend request to the user with the specified ID. Requires authentication.|
+|/accept	|POST	|Accepts a friend request. Requires authentication.|
+|/unfriend/:id	|POST	|Unfriends the user with the specified ID. Requires authentication.|
+|/mutual/:id	|POST	|Returns a list of mutual friends with the user with the specified ID. Requires authentication.|
+|/friends	|POST	|Returns a list of all friends. Requires authentication.|
+|/friendrequests	|POST	|Returns a list of all friend requests. Requires authentication.|
+|/cancel/:id	|POST	|Cancels a friend request. Requires authentication.|
+|/ignore/:id	|POST	|Ignores a friend request. Requires authentication.|
+|/confirm/:id	|POST	|Checks if the specified user is a friend or if a friend request has been sent. Requires authentication.|
