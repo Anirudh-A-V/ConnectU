@@ -9,28 +9,50 @@ const StateContext = createContext({
     setUser: () => { },
     users: [],
     setUsers: () => { },
+    login: false,
+    setLogin: () => { },
+    firstName: "",
+    setFirstName: () => { },
+    lastName: "",
+    setLastName: () => { },
+    email: "",
+    setEmail: () => { },
+    password: "",
+    setPassword: () => { },
 });
 
 export const ContextProvider = ({ children }) => {
     const [login, setLogin] = useState(false)
-    const [selectedFile, setSelectedFile] = useState(null);
 
     const [token, setToken] = useState("");
-    const [count, setCount] = useState(0);
     const [user, setUser] = useState({});
     const [users, setUsers] = useState([]);
+
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     return (
         <StateContext.Provider
             value={{
+                login,
+                setLogin,
                 token,
                 setToken,
-                count,
-                setCount,
                 user,
                 setUser,
                 users,
                 setUsers,
+                firstName,
+                setFirstName,
+                lastName,
+                setLastName,
+                email,
+                setEmail,
+                password,
+                setPassword,
+
             }}
         >
             {children}
