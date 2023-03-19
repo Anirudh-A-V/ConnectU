@@ -1,43 +1,49 @@
 import Navbar from "../Components/Navbar"
 import Cards from "../Components/Cards"
 import { useNavigate } from "react-router-dom"
-import { useEffect } from "react"
-import { useStateContext } from "../Contexts/StateContext"
+import { useEffect, useContext } from "react"
+import { StateContext } from "../Contexts/StateContext"
+
 const Home = () => {
 
-    const { users, setUsers } = useStateContext()
+    const { users, setUsers, query, setQuery } = useContext(StateContext)
     const navigate = useNavigate()
 
     const Token = localStorage.getItem("token")
 
     const fetchUsers = async () => {
-        const response = fetch(`${import.meta.env.VITE_API_URI}/users`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URI}/users`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${Token}`
             }
         })
-            .then(res => res.json())
-            .then(data => {
-                console.log(data)
-                const Users = data.users.filter((user) => {return user._id != localStorage.getItem("id").replace(/"/g, "")})
-                setUsers(Users)
-                // console.log(Users)
-            })
+        const data = await response.json()
+        console.log(data)
+        const Users = data.users.filter((user) => user._id !== localStorage.getItem("id").replace(/"/g, ""))
+        setUsers(Users)
     }
 
     useEffect(() => {
-        if (Token == "") {
+        if (Token === "") {
             navigate("/")
         }
         fetchUsers()
     }, [])
 
+    const filteredUsers = users.filter((user) => {
+        return user.name.first.toLowerCase().includes(query.toLowerCase()) || user.name.last.toLowerCase().includes(query.toLowerCase())
+    })
+
+    const handleSearch = (event) => {
+        setQuery(event.target.value)
+    }
+
     return (
         <div className="flex justify-center items-center h-full flex-wrap">
-            <Navbar />
+            <Navbar handleSearch={handleSearch} />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
-                {users.map((user) => {
+                {filteredUsers.map((user) => {
                     return (
                         <Cards slug={user._id} image={user.image} name={user.name} bio={user.bio}/>
                     )
