@@ -57,9 +57,9 @@ const Friends = () => {
                 <>
                     <h1 className="text-3xl font-semibold text-gray-700 mt-5">Friends</h1>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
-                        {filteredFriends.map((user) => {
+                        {filteredFriends.map((user, index) => {
                             return (
-                                <Cards slug={user._id} image={user.image} name={user.name} bio={user.bio} />
+                                <Cards key={index} slug={user._id} image={user.image} name={user.name} bio={user.bio} />
                             )
                         })}
                     </div>
