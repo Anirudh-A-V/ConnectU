@@ -42,7 +42,7 @@ npm run dev
 8. Now goto [http://127.0.0.1:5173/](http://127.0.0.1:5173/) where the app will be initialised
 
 ## API details
-This is the API documentation for the backend server of a simple social media network. This server is built using Node.js and Express, and uses JWT for authentication.
+The server is built using Node.js and Express, and uses JWT for authentication.
 By default the server will be running in port 3000 which can be changed by simple changing the `PORT` value in the `.env` file.
 
 ### Authentication
@@ -69,3 +69,19 @@ Authorization: Bearer <Token>
 |/cancel/:id	|POST	|Cancels a friend request. Requires authentication.|
 |/ignore/:id	|POST	|Ignores a friend request. Requires authentication.|
 |/confirm/:id	|POST	|Checks if the specified user is a friend or if a friend request has been sent. Requires authentication.|
+
+## Demo
+
+https://user-images.githubusercontent.com/76550448/226198211-e23c1dda-b64c-4ab1-9dca-354cb5ea37a4.mp4
+
+Link to the video file -> [Demo Video](https://drive.google.com/file/d/1AIo-E30WfwhC4IQHtnLRFMJJsW0dNHxQ/view?usp=sharing)
+
+## Screenshots
+
+![Screenshot 2023-03-19 234550](https://user-images.githubusercontent.com/76550448/226198415-9d0cca25-34e4-4ca3-9d32-24ebf3a5e4eb.png)
+![Screenshot 2023-03-19 234633](https://user-images.githubusercontent.com/76550448/226198413-4a528165-8d56-439b-a673-129b963af0b5.png)
+![Screenshot 2023-03-19 234715](https://user-images.githubusercontent.com/76550448/226198411-6e468a16-065b-47ab-a8f6-58c339752435.png)
+
+
+
+
