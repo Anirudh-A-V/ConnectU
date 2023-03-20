@@ -55,14 +55,14 @@ const Signup = () => {
         handleUpload();
     };
 
-    useEffect(() => {
+    useEffect(async () => {
         if (url !== "") {
             const API = `${import.meta.env.VITE_API_URI}/signup`;
 
             try {
                 console.log(url);
     
-                const response = fetch(API, {
+                const response = await fetch(API, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -79,7 +79,7 @@ const Signup = () => {
                     }),
                 });
     
-                const data = response.json();
+                const data = await response.json();
                 console.log(data.result);
                 console.log(data.result._id);
     
