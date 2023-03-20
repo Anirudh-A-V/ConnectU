@@ -18,12 +18,12 @@ const Navbar = ({ handleSearch }) => {
 
     const { user, query, setQuery } = useStateContext()
 
-    const Token = localStorage.getItem("token")
-    const User = localStorage.getItem("user").replace(/['"]+/g, '')
+    const Token = sessionStorage.getItem("token")
+    const User = sessionStorage.getItem("user").replace(/['"]+/g, '')
 
 
     const logout = () => {
-        localStorage.setItem("token", "")
+        sessionStorage.setItem("token", "")
         fetch(`${import.meta.env.VITE_API_URI}/logout`, {
             method: "POST",
             headers: {

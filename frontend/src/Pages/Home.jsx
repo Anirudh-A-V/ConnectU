@@ -9,8 +9,8 @@ const Home = () => {
     const { users, setUsers, query, setQuery } = useContext(StateContext)
     const navigate = useNavigate()
 
-    const Token = localStorage.getItem("token")
-    let ID = localStorage.getItem("id")
+    const Token = sessionStorage.getItem("token")
+    let ID = sessionStorage.getItem("id")
     if (ID !== null) {
         ID = ID.replace(/"/g, "")
     }

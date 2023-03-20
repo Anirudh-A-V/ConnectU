@@ -13,10 +13,10 @@ const User = () => {
     const [isFriend, setIsFriend] = useState(false);
     const [mutualFriends, setMutualFriends] = useState([]);
 
-    const User = localStorage.getItem("user").replace(/['"]+/g, '')
-    const ID = localStorage.getItem("id").replace(/['"]+/g, '')
+    const User = sessionStorage.getItem("user").replace(/['"]+/g, '')
+    const ID = sessionStorage.getItem("id").replace(/['"]+/g, '')
 
-    const Token = localStorage.getItem("token");
+    const Token = sessionStorage.getItem("token");
 
     const getUser = async () => {
         const response = fetch(`${import.meta.env.VITE_API_URI}/getUser/${id}`, {

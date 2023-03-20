@@ -9,8 +9,8 @@ const Friends = () => {
     const { friends, setFriends, query, setQuery } = useContext(StateContext)
     const navigate = useNavigate()
 
-    const Token = localStorage.getItem("token")
-    const User = localStorage.getItem("user").replace(/"/g, "")
+    const Token = sessionStorage.getItem("token")
+    const User = sessionStorage.getItem("user").replace(/"/g, "")
 
     const fetchFriends = async () => {
         const response = await fetch(`${import.meta.env.VITE_API_URI}/friends`, {
@@ -27,7 +27,7 @@ const Friends = () => {
         })
         const data = await response.json()
         console.log(data)
-        const Friends = data.friends.filter((friend) => friend._id !== localStorage.getItem("id").replace(/"/g, ""))
+        const Friends = data.friends.filter((friend) => friend._id !== sessionStorage.getItem("id").replace(/"/g, ""))
         setFriends(Friends)
     }
 

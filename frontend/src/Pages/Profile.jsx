@@ -16,10 +16,10 @@ const Profile = () => {
 
     const { friends, setFriends } = useContext(StateContext);
 
-    const User = localStorage.getItem("user").replace(/['"]+/g, '')
-    const ID = localStorage.getItem("id").replace(/['"]+/g, '')
+    const User = sessionStorage.getItem("user").replace(/['"]+/g, '')
+    const ID = sessionStorage.getItem("id").replace(/['"]+/g, '')
 
-    const Token = localStorage.getItem("token");
+    const Token = sessionStorage.getItem("token");
 
     const getUser = async () => {
         const response = fetch(`${import.meta.env.VITE_API_URI}/getUser/${ID}`, {
@@ -55,7 +55,7 @@ const Profile = () => {
         })
         const data = await response.json()
         console.log(data)
-        const Friends = data.friends.filter((friend) => friend._id !== localStorage.getItem("id").replace(/"/g, ""))
+        const Friends = data.friends.filter((friend) => friend._id !== sessionStorage.getItem("id").replace(/"/g, ""))
         setFriends(Friends)
     }
 
