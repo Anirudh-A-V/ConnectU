@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IoMdMenu } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useStateContext } from "../Contexts/StateContext";
 
 const NavDropdown = () => {
@@ -10,6 +10,8 @@ const NavDropdown = () => {
         setIsOpen(!isOpen);
     };
 
+    const navigate = useNavigate()
+
     const { user, query, setQuery } = useStateContext()
 
     const Token = sessionStorage.getItem("token")
@@ -17,7 +19,6 @@ const NavDropdown = () => {
 
 
     const logout = () => {
-        sessionStorage.setItem("token", "")
         fetch(`${import.meta.env.VITE_API_URI}/logout`, {
             method: "POST",
             headers: {
@@ -29,7 +30,18 @@ const NavDropdown = () => {
                 }
             })
         })
-        window.location.reload()
+        .then(res => res.json())
+        .then(data => {
+            console.log(data)
+            // Remove from session storage
+            sessionStorage.removeItem("token")
+            sessionStorage.removeItem("user")
+            sessionStorage.removeItem("id")
+            navigate("/")
+        })
+        .catch(err => {
+            console.log("Error logging out", err)
+        })
     }
 
     return (

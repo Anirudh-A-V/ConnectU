@@ -4,7 +4,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 import { BiCheck, BiX } from "react-icons/bi";
 import { SiQuantconnect } from "react-icons/si"
 import Spinner from "./Spinner";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import NavDropdown from "./NavDropdown";
 import world from "../Assets/world.svg"
@@ -18,12 +18,13 @@ const Navbar = ({ handleSearch }) => {
 
     const { user, query, setQuery } = useStateContext()
 
+    const navigate = useNavigate()
+
     const Token = sessionStorage.getItem("token")
     const User = sessionStorage.getItem("user").replace(/['"]+/g, '')
 
 
     const logout = () => {
-        sessionStorage.setItem("token", "")
         fetch(`${import.meta.env.VITE_API_URI}/logout`, {
             method: "POST",
             headers: {
@@ -38,11 +39,15 @@ const Navbar = ({ handleSearch }) => {
         .then(res => res.json())
         .then(data => {
             console.log(data)
+            // Remove from session storage
+            sessionStorage.removeItem("token")
+            sessionStorage.removeItem("user")
+            sessionStorage.removeItem("id")
+            navigate("/")
         })
         .catch(err => {
             console.log("Error logging out", err)
         })
-        window.location.reload()
     }
 
     const getFriendRequests = async () => {
