@@ -10,7 +10,11 @@ const Home = () => {
     const navigate = useNavigate()
 
     const Token = localStorage.getItem("token")
-    const ID = localStorage.getItem("id").replace(/"/g, "")
+    let ID = localStorage.getItem("id")
+    if (ID !== null) {
+        ID = ID.replace(/"/g, "")
+    }
+
 
     const fetchUsers = async () => {
         const response = await fetch(`${import.meta.env.VITE_API_URI}/users`, {
