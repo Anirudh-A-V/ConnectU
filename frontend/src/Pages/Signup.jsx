@@ -55,8 +55,8 @@ const Signup = () => {
         handleUpload();
     };
 
-    useEffect(async () => {
-        if (url !== "") {
+    useEffect(() => {
+        const Signup = async () => {
             const API = `${import.meta.env.VITE_API_URI}/signup`;
 
             try {
@@ -104,6 +104,9 @@ const Signup = () => {
             } catch (error) {
                 console.error("Error:", error);
             }
+        } 
+        if (url !== "") {
+            Signup();
         }
     }, [url]);
 
