@@ -14,7 +14,7 @@ Create a mini social network. The application should have features like:-
 A social media application is a web app which requires a lot of interactivity and spontaneous ressponses from the server. The code for such a website should be optimized to ensure maximum performance. The tech stacks that I used are :
 
 |Library/Framework|As|Reason|
-|----------|------|---------|
+|-----------------|------|---------|
 |ReactJS|Frontend| Since ReactJS is best for building highly interactive web apps|
 |Node.js|Backend| To optimize the code performance and have complete control of the backend logic which is not provided by a Backend-as-a-Service (BaaS) like Firebase|
 |Express.js|API Framework| Easier development of API|
