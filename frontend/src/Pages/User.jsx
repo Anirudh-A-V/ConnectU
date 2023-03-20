@@ -63,6 +63,9 @@ const User = () => {
                 // console.log("Mutual State", mutualFriends)
                 // setLoading(false)
             })
+            .catch(error => {
+                console.log("Error fetching mutual friends:", error);
+            });
     };
 
     const checkRequest = async () => {
@@ -91,6 +94,9 @@ const User = () => {
                     setHasRecieved(true)
                 }
             })
+            .catch(error => {
+                console.log("Error checking request:", error);
+            });
     }
 
     useEffect(() => {
@@ -154,6 +160,9 @@ const User = () => {
                     isFriend(true)
                 }
             })
+            .catch(error => {
+                console.log("Error accepting request:", error);
+            });
     }
 
     const cancelRequest = async () => {
@@ -178,6 +187,9 @@ const User = () => {
                     hasRecieved(false)
                 }
             })
+            .catch(error => {
+                console.log("Error cancelling request:", error);
+            });
     }
 
     const unfriend = async () => {
@@ -202,6 +214,9 @@ const User = () => {
                     hasRecieved(false)
                 }
             })
+            .catch(error => {
+                console.log("Error unfriending:", error);
+            });
     }
 
 
@@ -218,7 +233,9 @@ const User = () => {
             followUser();
         }
         // Reload Page
-        window.location.reload();
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
     }
 
     if (publicuser == {}) {
