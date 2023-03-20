@@ -35,6 +35,13 @@ const Navbar = ({ handleSearch }) => {
                 }
             })
         })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data)
+        })
+        .catch(err => {
+            console.log("Error logging out", err)
+        })
         window.location.reload()
     }
 
@@ -63,7 +70,7 @@ const Navbar = ({ handleSearch }) => {
                 setLoading(false)
             })
             .catch(err => {
-                console.log(err)
+                console.log("Error getting friend requests", err)
             })
     }
 
@@ -91,7 +98,7 @@ const Navbar = ({ handleSearch }) => {
                 }
             })
             .catch(err => {
-                console.log(err)
+                console.log("Error accepting friend request", err)
             })
 
         getFriendRequests()
@@ -119,7 +126,7 @@ const Navbar = ({ handleSearch }) => {
                 }
             })
             .catch(err => {
-                console.log(err)
+                console.log("Error rejecting friend request", err)
             })
         getFriendRequests()
     }
