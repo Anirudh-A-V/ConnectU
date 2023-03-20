@@ -10,6 +10,7 @@ const Home = () => {
     const navigate = useNavigate()
 
     const Token = localStorage.getItem("token")
+    const ID = localStorage.getItem("id").replace(/"/g, "")
 
     const fetchUsers = async () => {
         const response = await fetch(`${import.meta.env.VITE_API_URI}/users`, {
@@ -20,7 +21,7 @@ const Home = () => {
         })
         const data = await response.json()
         console.log(data)
-        const Users = data.users.filter((user) => user._id !== localStorage.getItem("id").replace(/"/g, ""))
+        const Users = data.users.filter((user) => user._id !== ID)
         setUsers(Users)
     }
 
