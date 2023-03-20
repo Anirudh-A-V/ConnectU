@@ -257,7 +257,7 @@ const Navbar = ({ handleSearch }) => {
 
                     <div className="flex mr-4 items-center">
                         <Link className=" hidden sm:inline-block py-2 px-3 hover:bg-gray-200 rounded-full" to={'/profile'} >
-                            {user && user.image ? <img src={user.image} className="h-6 w-6 rounded-full" /> : < CgProfile className="h-6 w-6" />}
+                            {user && user.image ? <img src={user.image} className="h-6 w-6 object-cover rounded-full" /> : < CgProfile className="h-6 w-6" />}
                             {/* <img src={user?.image} className="h-6 w-6" /> */}
                             {/* < CgProfile className="h-6 w-6" /> */}
                         </Link>
