@@ -22,11 +22,12 @@ const NavDropdown = () => {
         const response = fetch(`${import.meta.env.VITE_API_URI}/logout`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${Token}`
             },
             body: JSON.stringify({
                 "user": {
-                    "username": user.username
+                    "username": User
                 }
             })
         })
@@ -41,6 +42,7 @@ const NavDropdown = () => {
         })
         .catch(err => {
             console.log("Error logging out", err)
+            navigate("/")
         })
     }
 
