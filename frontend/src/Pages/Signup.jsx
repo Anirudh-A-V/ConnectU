@@ -52,57 +52,60 @@ const Signup = () => {
     }
 
     const handleSignup = () => {
-        const API = `${import.meta.env.VITE_API_URI}/signup`;
-
         handleUpload();
-        
-        setTimeout( async () => {
-        try {
-            console.log(url);
-
-            const response = await fetch(API, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    name: {
-                        first: firstName,
-                        last: lastName,
-                    },
-                    username: getUserName(),
-                    password: password,
-                    email: email,
-                    image: url,
-                }),
-            });
-
-            const data = await response.json();
-            console.log(data.result);
-            console.log(data.result._id);
-
-            const username = data.result.username;
-            const id = data.result._id;
-
-            if (data.token != null) {
-                setToken(data.token);
-                setUser(data.result);
-                if (import.meta.env.MODE === 'development') {
-                    localStorage.setItem("token", data.token);
-                    localStorage.setItem("user", JSON.stringify(username));
-                    localStorage.setItem("id", JSON.stringify(id));
-                }
-                sessionStorage.setItem("token", data.token);
-                sessionStorage.setItem("user", JSON.stringify(username));
-                sessionStorage.setItem("id", JSON.stringify(id));
-                navigate("/home");
-            } else {
-                alert("Something went wrong");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        }}, 2000);
     };
+
+    useEffect(() => {
+        if (url !== "") {
+            const API = `${import.meta.env.VITE_API_URI}/signup`;
+
+            try {
+                console.log(url);
+    
+                const response = fetch(API, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: {
+                            first: firstName,
+                            last: lastName,
+                        },
+                        username: getUserName(),
+                        password: password,
+                        email: email,
+                        image: url,
+                    }),
+                });
+    
+                const data = response.json();
+                console.log(data.result);
+                console.log(data.result._id);
+    
+                const username = data.result.username;
+                const id = data.result._id;
+    
+                if (data.token != null) {
+                    setToken(data.token);
+                    setUser(data.result);
+                    if (import.meta.env.MODE === 'development') {
+                        localStorage.setItem("token", data.token);
+                        localStorage.setItem("user", JSON.stringify(username));
+                        localStorage.setItem("id", JSON.stringify(id));
+                    }
+                    sessionStorage.setItem("token", data.token);
+                    sessionStorage.setItem("user", JSON.stringify(username));
+                    sessionStorage.setItem("id", JSON.stringify(id));
+                    navigate("/home");
+                } else {
+                    alert("Something went wrong");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+    }, [url]);
 
 
     const handleFirstNameInputChange = (event) => {
