@@ -24,7 +24,7 @@ const Navbar = ({ handleSearch }) => {
 
     const logout = () => {
         localStorage.setItem("token", "")
-        fetch("${import.meta.env.VITE_API_URI}/logout", {
+        fetch(`${import.meta.env.VITE_API_URI}/logout`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -167,7 +167,7 @@ const Navbar = ({ handleSearch }) => {
                                 <div className="flex items-center justify-center relative cursor-pointer h-8 w-8 rounded-full" onClick={() => setShowSearch(!showSearch)}>
                                     <img src={search} alt="Search" className="h-5 w-5" />
                                 </div>
-                            </div>
+                   ++         </div>
                             {showSearch && 
                                 <div className="absolute top-0 right-0 mt-16 mr-4">
                                     <div className="flex items-center flex-grow-0 flex-shrink pl-2 relative w-80 border rounded-full px-1  py-1" type="button">

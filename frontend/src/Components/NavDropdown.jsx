@@ -18,7 +18,7 @@ const NavDropdown = () => {
 
     const logout = () => {
         localStorage.setItem("token", "")
-        fetch("${import.meta.env.VITE_API_URI}/logout", {
+        fetch(`${import.meta.env.VITE_API_URI}/logout`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
