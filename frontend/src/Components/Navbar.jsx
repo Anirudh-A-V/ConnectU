@@ -25,7 +25,7 @@ const Navbar = ({ handleSearch }) => {
 
 
     const logout = () => {
-        fetch(`${import.meta.env.VITE_API_URI}/logout`, {
+        const response = fetch(`${import.meta.env.VITE_API_URI}/logout`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
