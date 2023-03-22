@@ -9,7 +9,7 @@ export const StateContext = createContext({
     setUser: () => { },
     users: [],
     setUsers: () => { },
-    login: false,
+    login: true,
     setLogin: () => { },
     firstName: "",
     setFirstName: () => { },
@@ -26,7 +26,7 @@ export const StateContext = createContext({
 });
 
 export const ContextProvider = ({ children }) => {
-    const [login, setLogin] = useState(false)
+    const [login, setLogin] = useState(true)
 
     const [token, setToken] = useState("");
     const [user, setUser] = useState({});
