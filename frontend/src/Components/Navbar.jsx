@@ -22,6 +22,7 @@ const Navbar = ({ handleSearch }) => {
 
     const Token = sessionStorage.getItem("token")
     const User = sessionStorage.getItem("user").replace(/['"]+/g, '')
+    const image = sessionStorage.getItem("image").replace(/['"]+/g, '')
 
 
     const logout = () => {
@@ -260,7 +261,7 @@ const Navbar = ({ handleSearch }) => {
 
                     <div className="flex mr-4 items-center">
                         <Link className=" hidden sm:inline-block py-2 px-3 hover:bg-gray-200 rounded-full" to={'/profile'} >
-                            {user && user.image ? <img src={user.image} className="h-6 w-6 object-cover rounded-full" /> : < CgProfile className="h-6 w-6" />}
+                            {image ? <img src={image} className="h-6 w-6 object-cover rounded-full" /> : < CgProfile className="h-6 w-6" />}
                             {/* <img src={user?.image} className="h-6 w-6" /> */}
                             {/* < CgProfile className="h-6 w-6" /> */}
                         </Link>
