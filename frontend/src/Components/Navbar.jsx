@@ -210,6 +210,9 @@ const Navbar = ({ handleSearch }) => {
                                 <div className="flex items-center h-5">
                                     <div className="_xpkakx">
                                         <img src={world} alt="world" className="h-5 w-5" />
+                                    {/* Badge */}
+                                    {friendRequests.length > 0 && <span className="absolute bottom-0 right-0 inline-flex items-center justify-center h-3 w-3 text-xs font-bold leading-none text-white transform -translate-x-[50%] -translate-y-[45%]  bg-red-600 rounded-full"></span>}
+
                                     </div>
                                 </div>
                             </button>
