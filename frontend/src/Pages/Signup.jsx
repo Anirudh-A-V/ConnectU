@@ -97,6 +97,7 @@ const Signup = () => {
                     sessionStorage.setItem("token", data.token);
                     sessionStorage.setItem("user", JSON.stringify(username));
                     sessionStorage.setItem("id", JSON.stringify(id));
+                    sessionStorage.setItem("image", JSON.stringify(data.user.image));
                     navigate("/home");
                 } else {
                     alert("Something went wrong");
