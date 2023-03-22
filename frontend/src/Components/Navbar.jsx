@@ -165,7 +165,7 @@ const Navbar = ({ handleSearch }) => {
                         <div className="inline-flex items-center max-w-full">
                             <div className="flex items-center flex-grow-0 flex-shrink pl-2 relative w-96 border rounded-full px-1  py-1" type="button">
                                 {/* <div className="block flex-grow flex-shrink overflow-hidden">Start your search</div> */}
-                                <input className="ml-2 block flex-grow flex-shrink overflow-hidden focus:border-gray-300" placeholder="Start your search" onChange={(e) => setQuery(e.target.value)} />
+                                <input className="ml-2 block flex-grow flex-shrink overflow-hidden focus:border-gray-300 p-1 focus:outline-none" placeholder="Start your search" onChange={(e) => setQuery(e.target.value)} />
                                 <div className="flex items-center justify-center relative cursor-pointer h-8 w-8 rounded-full">
                                     <img src={search} alt="Search" className="h-5 w-5" />
                                 </div>
@@ -186,7 +186,7 @@ const Navbar = ({ handleSearch }) => {
                                 <div className="absolute top-0 right-0 mt-16 mr-4">
                                     <div className="flex items-center flex-grow-0 flex-shrink pl-2 relative w-80 border rounded-full px-1  py-1" type="button">
                                         {/* <div className="block flex-grow flex-shrink overflow-hidden">Start your search</div> */}
-                                        <input className="ml-2 h-8 flex flex-grow justify-center items-center flex-shrink overflow-hidden focus:border-gray-300" placeholder="Start your search" onChange={(e) => setQuery(e.target.value)} />
+                                        <input className="ml-2 h-8 flex flex-grow justify-center items-center flex-shrink overflow-hidden focus:border-gray-300 p-1 focus:outline-none" placeholder="Start your search" onChange={(e) => setQuery(e.target.value)} />
                                         <div className="flex items-center justify-center relative cursor-pointer h-8 w-8 rounded-full">
                                             <img src={search} alt="Search" className="h-5 w-5" />
                                         </div>
