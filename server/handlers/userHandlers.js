@@ -309,7 +309,7 @@ const mutualFriends = async (req, res) => {
         const mutualFriends = await User.aggregate([
             { $match: { _id: { $in: currentUser.Friends } } },
             { $match: { _id: { $in: friendUser.Friends } } },
-            { $project: { _id: 1, username: 1, name: 1, email: 1, image: 1 } }
+            { $project: { _id: 1, username: 1, name: 1, email: 1, image: 1, bio: 1 } }
         ]);
 
         return res.status(200).json({ mutualFriends });
