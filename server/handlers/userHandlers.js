@@ -16,7 +16,7 @@ const getAllUsers = async (req, res) => {
 const signUp = async (req, res) => {
     try {
         const { name, username, password, email, image } = req.body;
-        const existingUser = await User.findOne({ username });
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             return res.status(409).json({ message: 'User already exists' });
@@ -40,8 +40,8 @@ const signUp = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
         if (user == null) {
             return res.status(400).json({ message: 'Cannot find user' });
         }

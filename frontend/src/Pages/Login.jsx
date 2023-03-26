@@ -19,10 +19,6 @@ const Login = () => {
         setPassword(event.target.value);
     };
 
-    const getUserName = () => {
-        return email.split("@")[0];
-    }
-
     const handleLogin = () => {
         const API = `${import.meta.env.VITE_API_URI}/login`
 
@@ -32,7 +28,7 @@ const Login = () => {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                "username": getUserName(),
+                "email": email,
                 "password": password
             })
         })
