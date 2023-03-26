@@ -54,7 +54,6 @@ const Navbar = ({ handleSearch }) => {
     }
 
     const getFriendRequests = async () => {
-        console.log("Getting Friend Requests", User)
         setLoading(true)
 
 

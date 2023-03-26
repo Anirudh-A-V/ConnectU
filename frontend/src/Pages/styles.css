@@ -1,13 +1,13 @@
 .App {
-    font-family: "DM Sans", sans-serif;
-    font-family: "Lato", sans-serif;
-    text-align: center;
-  }
-  
-  .bg-image {
-    background: linear-gradient(45deg, rgba(4, 4, 4, 0.6), rgba(34, 34, 33, 0.4) ),
-      url(../Assets/bg5.jpg ) center;
-    background-size: cover;
-    filter: grayscale(1);
-  }
-  
+  font-family: "DM Sans", sans-serif;
+  font-family: "Lato", sans-serif;
+  text-align: center;
+}
+
+.bg-image {
+  background: linear-gradient(45deg, rgba(4, 4, 4, 0.6), rgba(34, 34, 33, 0.4)),
+    url(../Assets/bg5.jpg ) center;
+  background-size: cover;
+  filter: grayscale(1);
+}
+
