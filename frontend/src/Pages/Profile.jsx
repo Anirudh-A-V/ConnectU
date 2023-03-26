@@ -9,10 +9,6 @@ import { useContext } from "react";
 const Profile = () => {
     const [publicuser, setPublicUser] = useState({});
     const [loading, setLoading] = useState(true);
-    const [hasRequested, setHasRequested] = useState(false);
-    const [hasRecieved, setHasRecieved] = useState(false);
-    const [isFriend, setIsFriend] = useState(false);
-    const [mutualFriends, setMutualFriends] = useState([]);
 
     const { friends, setFriends } = useContext(StateContext);
 
@@ -61,7 +57,7 @@ const Profile = () => {
 
     useEffect(() => {
         getUser();
-        if (friends == []) {
+        if (friends.length === 0) {
             fetchFriends()
         }
     }, []);
@@ -89,12 +85,9 @@ const Profile = () => {
                                 />
                                 <div className="flex flex-col justify-center">
                                     <h1 className="text-2xl md:text-4xl font-bold ml-8 text-gray-900 mb-1">{publicuser.name.first} {publicuser.name.last}</h1>
-                                    {/* <div className={`flex justify-center items-center cursor-pointer md:text-lg font-normal w-40 ml-8 mt-1 text-gray-800 p-2 border-2 ${!hasRequested && !hasRecieved && !isFriend && "hover:bg-gray-200 md:w-28"} ${hasRequested && "bg-red-400 hover:bg-red-500 md:w-44"} ${hasRecieved && "bg-green-300 hover:bg-green-400 md:w-44"} ${isFriend && "hover:bg-gray-200 md:w-28"} rounded-lg`} onClick={handleAction}>
-                                        {hasRequested && "Cancel Request"}
-                                        {hasRecieved && "Accept Request"}
-                                        {isFriend && "Unfriend"}
-                                        {!hasRequested && !hasRecieved && !isFriend && "Follow"}
-                                    </div> */}
+                                    <div className={`flex justify-center items-center cursor-pointer md:text-lg font-normal w-40 ml-8 mt-1 text-gray-800 p-2 border-2 hover:bg-gray-50 rounded-lg`} onClick={() => {}}>
+                                        Edit Profile
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex justify-between w-80 mt-8">
@@ -104,7 +97,7 @@ const Profile = () => {
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <p className="text-lg font-semibold text-gray-800">Mutuals</p>
-                                    <p className="text-xl font-bold text-gray-600">{mutualFriends.length > 0 ? mutualFriends.length : 0}</p>
+                                    <p className="text-xl font-bold text-gray-600">{friends.length > 0 ? friends.length : 0}</p>
                                 </div>
                                 <div className="flex flex-col items-center">
                                     <p className="text-lg font-semibold text-gray-800">Posts</p>
