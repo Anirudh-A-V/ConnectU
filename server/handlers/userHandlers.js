@@ -306,17 +306,20 @@ const mutualFriends = async (req, res) => {
             User.findOne({ _id: id })
         ]);
 
-        const mutualFriends = currentUser.Friends.filter((friend) => friendUser.Friends.includes(friend));
+        const mutualFriends = await User.aggregate([
+            { $match: { _id: { $in: currentUser.Friends } } },
+            { $match: { _id: { $in: friendUser.Friends } } },
+            { $project: { _id: 1, username: 1, name: 1, email: 1, image: 1 } }
+        ]);
 
-        const mutualFriendsList = await User.find({ _id: { $in: mutualFriends } }).select('-password -accessTokens -request');
-
-        return res.status(200).json({ mutualFriendsList });
+        return res.status(200).json({ mutualFriends });
 
     } catch (error) {
         console.log('Error occurred while fetching mutual friends:', error);
         res.status(500).json({ error });
     }
 };
+
 
 const isFriendOrRequestSent = async (req, res) => {
     try {

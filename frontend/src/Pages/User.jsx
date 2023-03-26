@@ -54,9 +54,9 @@ const User = () => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
+                console.log(data.mutualFriends)
+                setMutualFriends(data.mutualFriends)
                 console.log("Public User", publicuser.request)
-                setMutualFriends(data.mutualFriendsList)
                 console.log("Has Requested", hasRequested)
                 console.log("Has Recieved", hasRecieved)
                 console.log("Is Friend", isFriend)
