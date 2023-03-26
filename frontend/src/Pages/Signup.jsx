@@ -82,11 +82,11 @@ const Signup = () => {
                 const data = await response.json();
                 console.log(data.result);
                 console.log(data.result._id);
-                console.log(data.result.image);
+                
+                const image = data.result.image || null;
     
                 const username = data.result.username;
                 const id = data.result._id;
-                const image = data.result.image;
     
                 if (data.token != null) {
                     setToken(data.token);
@@ -99,7 +99,9 @@ const Signup = () => {
                     sessionStorage.setItem("token", data.token);
                     sessionStorage.setItem("user", JSON.stringify(username));
                     sessionStorage.setItem("id", JSON.stringify(id));
-                    sessionStorage.setItem("image", JSON.stringify(image));
+                    if (image !== null) {
+                        sessionStorage.setItem("image", JSON.stringify(image));
+                    }
                     navigate("/home");
                 } else {
                     alert("Something went wrong");
