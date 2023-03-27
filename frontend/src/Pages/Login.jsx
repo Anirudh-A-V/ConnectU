@@ -22,6 +22,11 @@ const Login = () => {
     const handleLogin = () => {
         const API = `${import.meta.env.VITE_API_URI}/login`
 
+        if (!ValidateEmail(email)) {
+            alert("Please enter a valid email address");
+            return;
+        }
+
         const result = fetch(API, {
             method: "POST",
             headers: {
@@ -43,11 +48,6 @@ const Login = () => {
                 if (data.token) {
                     setToken(data.token);
                     setUser(data.user);
-                    if (import.meta.env.MODE === 'development') {
-                        localStorage.setItem("token", data.token);
-                        localStorage.setItem("user", JSON.stringify(data.user.username));
-                        localStorage.setItem("id", JSON.stringify(data.user._id));
-                    }
                     sessionStorage.setItem("token", data.token);
                     sessionStorage.setItem("user", JSON.stringify(data.user.username));
                     sessionStorage.setItem("id", JSON.stringify(data.user._id));
@@ -61,6 +61,12 @@ const Login = () => {
             .catch((error) => {
                 console.error('Error:', error);
             });
+    }
+
+    function ValidateEmail(inputText) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isValidEmail = emailRegex.test(email);
+        return isValidEmail;
     }
 
     useEffect(() => {
