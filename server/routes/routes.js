@@ -1,5 +1,6 @@
 const express = require('express');
-const { getAllUsers, signUp, login, logout, getUser, sendFriendRequest, acceptFriendRequest, unFriend, mutualFriends, getFriends, getFriendRequests, cancelFriendRequest, ignoreFriendRequest, isFriendOrRequestSent } = require('../handlers/userHandlers');
+const { getAllUsers, signUp, login, logout, getUser } = require('../handlers/userHandlers');
+const { sendFriendRequest, acceptFriendRequest, unFriend, mutualFriends, getFriends, getFriendRequests, cancelFriendRequest, ignoreFriendRequest, isFriendOrRequestSent } = require('../handlers/friendHandlers');
 const authenticateToken = require('../auth/auth');
 
 const router = express.Router();
