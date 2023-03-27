@@ -1,6 +1,5 @@
 import { useStateContext } from "../Contexts/StateContext";
 import { useState, useEffect } from "react";
-// import { handleEmailInputChange, handlePasswordInputChange, handleFirstNameInputChange, handleLastNameInputChange, getUserName } from "../Utils/FormUtils";
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { storage } from '../Firebase/config'
 import { useNavigate } from "react-router-dom";
@@ -11,6 +10,12 @@ const Signup = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [smallScreen, setSmallScreen] = useState(false);
     const [url, setUrl] = useState("");
+
+    const [noImage, setNoImage] = useState(false);
+    const [emptyFirstName, setEmptyFirstName] = useState(false);
+    const [emptyLastName, setEmptyLastName] = useState(false);
+    const [emptyEmail, setEmptyEmail] = useState(false);
+    const [emptyPassword, setEmptyPassword] = useState(false);
 
     const navigate = useNavigate();
 
@@ -26,8 +31,31 @@ const Signup = () => {
 
     const handleUpload = () => {
         if (selectedFile == null) {
+            setNoImage(true);
             return;
         }
+
+        if (firstName === "" || lastName === "" || email === "" || password === "") {
+            if (firstName === "") {
+                setEmptyFirstName(true);
+            }
+            if (lastName === "") {
+                setEmptyLastName(true);
+            }
+            if (email === "") {
+                setEmptyEmail(true);
+            }
+            if (password === "") {
+                setEmptyPassword(true);
+            }
+            return;
+        }
+
+        if (!ValidateEmail(email)) {
+            alert("Please enter a valid email address");
+            return;
+        }
+
         const storageRef = ref(storage, `images/${selectedFile.name}`);
 
         const uploadImage = uploadBytesResumable(storageRef, selectedFile);
@@ -55,13 +83,19 @@ const Signup = () => {
         handleUpload();
     };
 
+    function ValidateEmail(inputText) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isValidEmail = emailRegex.test(email);
+        return isValidEmail;
+    }
+
     useEffect(() => {
         const Signup = async () => {
             const API = `${import.meta.env.VITE_API_URI}/signup`;
 
             try {
                 console.log(url);
-    
+
                 const response = await fetch(API, {
                     method: "POST",
                     headers: {
@@ -78,24 +112,19 @@ const Signup = () => {
                         image: url,
                     }),
                 });
-    
+
                 const data = await response.json();
                 console.log(data.result);
                 console.log(data.result._id);
-                
+
                 const image = data.result.image || null;
-    
+
                 const username = data.result.username;
                 const id = data.result._id;
-    
+
                 if (data.token != null) {
                     setToken(data.token);
                     setUser(data.result);
-                    if (import.meta.env.MODE === 'development') {
-                        localStorage.setItem("token", data.token);
-                        localStorage.setItem("user", JSON.stringify(username));
-                        localStorage.setItem("id", JSON.stringify(id));
-                    }
                     sessionStorage.setItem("token", data.token);
                     sessionStorage.setItem("user", JSON.stringify(username));
                     sessionStorage.setItem("id", JSON.stringify(id));
@@ -109,11 +138,32 @@ const Signup = () => {
             } catch (error) {
                 console.error("Error:", error);
             }
-        } 
+        }
         if (url !== "") {
             Signup();
         }
     }, [url]);
+
+    useEffect(() => {
+        if (selectedFile != null) {
+            setNoImage(false);
+        }
+    }, [selectedFile]);
+
+    useEffect(() => {
+        if (firstName !== "") {
+            setEmptyFirstName(false);
+        } 
+        if (lastName !== "") {
+            setEmptyLastName(false);
+        } 
+        if (email !== "") {
+            setEmptyEmail(false);
+        } 
+        if (password !== "") {
+            setEmptyPassword(false);
+        }
+    }, [firstName, lastName, email, password]);
 
 
     const handleFirstNameInputChange = (event) => {
@@ -163,14 +213,14 @@ const Signup = () => {
                         <div className="relative mb-6 xl:w-44">
                             <input
                                 type="text"
-                                className="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
+                                className={`peer m-0 block h-[58px] w-full rounded border border-solid ${emptyFirstName ? "border-red-300 bg-red-50 " : "border-neutral-300 bg-white "} bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]`}
                                 id="floatingFirstName"
                                 placeholder="name@example.com"
                                 onChange={handleFirstNameInputChange}
                             />
                             <label
                                 htmlFor="floatingFirstName"
-                                className="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
+                                className={`pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 ${emptyFirstName ? "text-red-600" : "text-neutral-600"} transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none`}
                             >
                                 First Name
                             </label>
@@ -178,14 +228,14 @@ const Signup = () => {
                         <div className="relative mb-6 xl:w-44">
                             <input
                                 type="text"
-                                className="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
+                                className={`peer m-0 block h-[58px] w-full rounded border border-solid ${emptyLastName ? "border-red-300 bg-red-50 " : "border-neutral-300 bg-white "} bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]`}
                                 id="floatingLastName"
                                 placeholder="name@example.com"
                                 onChange={handleLastNameInputChange}
                             />
                             <label
                                 htmlFor="floatingLastName"
-                                className="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
+                                className={`pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 ${emptyLastName ? "text-red-600" : "text-neutral-600"} transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none`}
                             >
                                 Last Name
                             </label>
@@ -194,14 +244,14 @@ const Signup = () => {
                     <div className="relative mb-6 xl:w-96">
                         <input
                             type="email"
-                            className="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
+                            className={`peer m-0 block h-[58px] w-full rounded border border-solid  ${emptyEmail ? "border-red-300 bg-red-50 " : "border-neutral-300 bg-white "} bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]`}
                             id="floatingEmailSignUp"
                             placeholder="name@example.com"
                             onChange={handleEmailInputChange}
                         />
                         <label
                             htmlFor="floatingEmailSignUp"
-                            className="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
+                            className={`pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 ${emptyEmail ? "text-red-600" : "text-neutral-600"} transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none`}
                         >
                             Email address
                         </label>
@@ -209,22 +259,22 @@ const Signup = () => {
                     <div className="relative mb-3 xl:w-96">
                         <input
                             type="password"
-                            className="peer m-0 block h-[58px] w-full rounded border border-solid border-neutral-300 bg-white bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]"
+                            className={`peer m-0 block h-[58px] w-full rounded border border-solid  ${emptyPassword ? "border-red-300 bg-red-50 " : "border-neutral-300 bg-white "} bg-clip-padding py-4 px-3 text-base font-normal leading-tight text-neutral-600 ease-in-out placeholder:text-transparent focus:border-primary focus:bg-white focus:pt-[1.625rem] focus:pb-[0.625rem] focus:text-neutral-700 focus:shadow-te-primary focus:outline-none  [&:not(:placeholder-shown)]:pt-[1.625rem] [&:not(:placeholder-shown)]:pb-[0.625rem]`}
                             id="floatingPasswordSignUp"
                             placeholder="Password"
                             onChange={handlePasswordInputChange}
                         />
                         <label
                             htmlFor="floatingPasswordSignUp"
-                            className="pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 text-neutral-600 transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none"
+                            className={`pointer-events-none absolute top-0 left-0 origin-[0_0] border border-solid border-transparent py-4 px-3 ${emptyPassword ? "text-red-600" : "text-neutral-600"} transition-[opacity,_transform] duration-100 ease-in-out peer-focus:translate-x-[0.15rem] peer-focus:-translate-y-2 peer-focus:scale-[0.85] peer-focus:opacity-[0.65] peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:scale-[0.85] peer-[:not(:placeholder-shown)]:opacity-[0.65] motion-reduce:transition-none`}
                         >
                             Password
                         </label>
                     </div>
                     <div className="relative mb-3 xl:w-96">
-                        <div className="w-full border border-gray-300 rounded-lg flex items-center">
-                            <label className="flex items-center justify-center text-sm font-medium text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-100 focus:outline-none w-40 h-10" htmlFor="file_input">Upload file</label>
-                            <input className=" w-full text-sm hidden text-gray-800 border hover:bg-gray-600 border-gray-300 rounded-lg cursor-pointer bg-gray-500 focus:outline-none" aria-describedby="file_input_help" id="file_input" type="file" onChange={handleFileInputChange} />
+                        <div className={`w-full border ${noImage ? "border-red-300" : "border-gray-300"} rounded-lg flex items-center`}>
+                            <label className={`flex items-center justify-center text-sm font-medium  border  rounded-lg cursor-pointer ${noImage ? "bg-red-100 text-red-900 border-red-300" : "bg-gray-100 border-gray-300 text-gray-900"} focus:outline-none w-40 h-10`} htmlFor="file_input">Upload file</label>
+                            <input className={`w-full text-sm hidden text-gray-800 border hover:bg-gray-600 border-gray-300 bg-gray-500 focus:outline-none rounded-lg cursor-pointer`} aria-describedby="file_input_help" id="file_input" type="file" onChange={handleFileInputChange} />
                             <div className="w-full flex items-center justify-center">
                                 {selectedFile && <p className="text-sm text-gray-700">{selectedFile.name}</p>}
                             </div>
