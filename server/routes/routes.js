@@ -1,7 +1,7 @@
 const express = require('express');
 const { signUp, login, logout, getUser } = require('../handlers/userHandlers');
 const { sendFriendRequest, acceptFriendRequest, unFriend, mutualFriends, getFriends, getFriendRequests, cancelFriendRequest, ignoreFriendRequest, isFriendOrRequestSent } = require('../handlers/friendHandlers');
-const { getAllUsers } = require('../handlers/neutralHandlers');
+const { getAllUsers, getPosts } = require('../handlers/neutralHandlers');
 const authenticateToken = require('../auth/auth');
 
 const router = express.Router();
@@ -24,5 +24,7 @@ router.post('/friendrequests', authenticateToken, getFriendRequests);
 router.post('/cancel/:id', authenticateToken, cancelFriendRequest);
 router.post('/ignore/:id', authenticateToken, ignoreFriendRequest);
 router.post('/confirm/:id', authenticateToken, isFriendOrRequestSent);
+
+router.get('/posts', getPosts);
 
 module.exports = router;
