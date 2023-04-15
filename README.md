@@ -11,7 +11,7 @@ Create a mini social network. The application should have features like:-
 - View a list of mutual friends between users. A mutual friend is a user who is a friend of two other users who may or may not know each other. 
 
 ## Solution
-A social media application is a web app which requires a lot of interactivity and spontaneous ressponses from the server. The code for such a website should be optimized to ensure maximum performance. The tech stacks that I used are :
+A social media application is a web app which requires a lot of interactivity and spontaneous responses from the server. The code for such a website should be optimized to ensure maximum performance. The tech stacks that I used are :
 
 |Library/Framework|As|Reason|
 |-----------------|------|---------|
